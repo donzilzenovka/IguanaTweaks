@@ -17,7 +17,7 @@ buildscript {
 
 apply plugin: 'forge'
 
-version = "2C"
+version = "3.0.0-prototype.1"
 group = "iguanaman"
 archivesBaseName = "IguanaTweaks"
 
@@ -28,6 +28,16 @@ minecraft {
     
     replaceIn "ModInfo.java"
     replace "@MOD_VERSION@", project.version
+}
+
+// ForgeGradle 1.2 still points at retired HTTP S3 endpoints. Keep the legacy
+// toolchain reproducible by using Mojang's content-addressed HTTPS artifacts.
+downloadClient {
+    url = new net.minecraftforge.gradle.delayed.DelayedString(project, 'https://launcher.mojang.com/v1/objects/e80d9b3bf5085002218d4be59e668bac718abbc6/client.jar')
+}
+
+downloadServer {
+    url = new net.minecraftforge.gradle.delayed.DelayedString(project, 'https://launcher.mojang.com/v1/objects/952438ac4e01b4d115c5fc38f891710c4941df29/server.jar')
 }
 
 task buildInfo {

@@ -8,7 +8,9 @@ import net.minecraft.item.ItemStack;
 import cpw.mods.fml.common.registry.GameRegistry;
 import iguanaman.iguanatweaks.IguanaTweaks;
 import iguanaman.iguanatweaks.config.IguanaConfig;
-import iguanaman.iguanatweaks.config.IguanaWeightsConfig;
+import iguanaman.iguanatweaks.weight.CarryContext;
+import iguanaman.iguanatweaks.weight.WeightContext;
+import iguanaman.iguanatweaks.weight.WeightService;
 
 public class StackSizeTweaks {
 
@@ -20,7 +22,7 @@ public class StackSizeTweaks {
             if(obj instanceof ItemBlock && doBlocks) {
                 Block block = ((ItemBlock)obj).blockInstance;
                 ItemStack stack = new ItemStack(block);
-                float weight = (float)IguanaWeightsConfig.getWeight(stack);
+                float weight = (float)WeightService.getUnitWeight(stack, new WeightContext(CarryContext.INVENTORY));
                 int size = 0;
                 if(weight > 0) {
                     size = Math.round((float)stack.getItem().getItemStackLimit(stack) / ((float)IguanaConfig.blockStackSizeDividerMax * weight));
@@ -44,7 +46,7 @@ public class StackSizeTweaks {
             } else if(doItems) {
                 Item item = (Item)obj;
                 ItemStack stack = new ItemStack(item);
-                float weight = (float)IguanaWeightsConfig.getWeight(stack);
+                float weight = (float)WeightService.getUnitWeight(stack, new WeightContext(CarryContext.INVENTORY));
                 int size = 0;
                 if(weight > 0) {
                     size = Math.round((float)item.getItemStackLimit(stack) / ((float)IguanaConfig.itemStackSizeDivider * weight));

@@ -61,6 +61,7 @@ public class IguanaConfig {
     public static boolean detailedEncumbranceHudText;
     public static int maxCarryWeight;
     public static double armorWeight;
+    public static double wornArmorWeightPercentage;
     public static int damageSlowdownPotionId;
     public static int damageSlowdownDuration;
     public static boolean damageSlowdownDifficultyScaling;
@@ -287,6 +288,11 @@ public class IguanaConfig {
         armorWeightProperty.comment = "Percentage of slowdown for each point (half-shield) of armor (0 to disable)";
         armorWeight = Math.max(armorWeightProperty.getDouble(0.5d), 0d);
         armorWeightProperty.set(armorWeight);
+
+        Property wornArmorWeightPercentageProperty = config.get("movementrestriction", "wornArmorWeightPercentage", 50d);
+        wornArmorWeightPercentageProperty.comment = "Percentage of normal item weight applied to armour while it is worn (0-100). Armour carried in the inventory uses full weight.";
+        wornArmorWeightPercentage = Math.min(Math.max(wornArmorWeightPercentageProperty.getDouble(50d), 0d), 100d);
+        wornArmorWeightPercentageProperty.set(wornArmorWeightPercentage);
 
         Property maxCarryWeightProperty = config.get("movementrestriction", "maxCarryWeight", 512);
         maxCarryWeightProperty.comment = "Maximum carry weight (default 512) (Set 0 to disable)";

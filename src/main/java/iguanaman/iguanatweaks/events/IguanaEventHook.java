@@ -19,9 +19,7 @@ import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayer.EnumStatus;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
@@ -50,9 +48,12 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import iguanaman.iguanatweaks.IguanaTweaks;
 import iguanaman.iguanatweaks.config.IguanaConfig;
-import iguanaman.iguanatweaks.config.IguanaWeightsConfig;
 import iguanaman.iguanatweaks.data.EntityData;
 import iguanaman.iguanatweaks.util.IguanaUtils;
+import iguanaman.iguanatweaks.weight.CarryContext;
+import iguanaman.iguanatweaks.weight.InventoryWeightCalculator;
+import iguanaman.iguanatweaks.weight.WeightContext;
+import iguanaman.iguanatweaks.weight.WeightService;
 
 public class IguanaEventHook {
 
@@ -123,7 +124,7 @@ public class IguanaEventHook {
                 }
             } else {
                 double slownessWeight = 0d;
-                double slownessArmour = (double)entity.getTotalArmorValue() * IguanaConfig.armorWeight;
+                double slownessArmour = 0d;
                 double weight = 0d;
                 double maxWeight = 0d;
 
@@ -190,22 +191,7 @@ public class IguanaEventHook {
                     if(entity instanceof EntityPlayer && IguanaConfig.maxCarryWeight > 0) {
                         EntityPlayer player = (EntityPlayer)entity;
 
-                        for(Object slotObject : player.inventoryContainer.inventorySlots) {
-                            Slot slot = (Slot)slotObject;
-                            if(slot.getHasStack()) {
-                                double toAdd;
-
-                                ItemStack stack = slot.getStack();
-
-                                toAdd = IguanaWeightsConfig.getWeight(stack);
-
-                                if(stack.getItem() instanceof ItemBlock) {
-                                    toAdd *= IguanaConfig.rockWeight;
-                                }
-
-                                weight += toAdd * (double)stack.stackSize;
-                            }
-                        }
+                        weight = InventoryWeightCalculator.getCarriedWeight(player);
 
                         // Calculate max weight
                         maxWeight = (double)IguanaConfig.maxCarryWeight;
@@ -589,7 +575,7 @@ public class IguanaEventHook {
     @SubscribeEvent
     public void onItemTooltip(ItemTooltipEvent event) {
         if(!IguanaConfig.disableWeightsTooltip && event.showAdvancedItemTooltips) {
-            event.toolTip.add(I18n.format("hud.weight") + ": " + IguanaWeightsConfig.getWeight(event.itemStack));
+            event.toolTip.add(I18n.format("hud.weight") + ": " + WeightService.getUnitWeight(event.itemStack, new WeightContext(CarryContext.INVENTORY)));
         }
     }
 }
