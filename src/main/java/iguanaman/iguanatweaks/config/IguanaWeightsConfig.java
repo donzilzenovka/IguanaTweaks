@@ -43,14 +43,17 @@ public class IguanaWeightsConfig {
      * @return The weight of the block as a double
      */
     public static double getWeight(ItemStack stack) {
-        if(weights != null && stack.getItem() != null && Item.itemRegistry.getNameForObject(stack.getItem()) != null && weights.containsKey(Item.itemRegistry.getNameForObject(stack.getItem()))) {
-            return weights.get(Item.itemRegistry.getNameForObject(stack.getItem()));
-        } else {
-            return getDefaultWeight(stack);
-        }
+        Double configured = getConfiguredWeight(stack);
+        return configured == null ? getDefaultWeight(stack) : configured.doubleValue();
     }
 
-    private static double getDefaultWeight(ItemStack stack) {
+    public static Double getConfiguredWeight(ItemStack stack) {
+        if(weights == null || stack == null || stack.getItem() == null) return null;
+        String name = Item.itemRegistry.getNameForObject(stack.getItem());
+        return name == null ? null : weights.get(name);
+    }
+
+    public static double getDefaultWeight(ItemStack stack) {
         if(!(stack.getItem() instanceof ItemBlock)) {
             return IguanaConfig.itemWeight;
         }

@@ -35,6 +35,7 @@ import iguanaman.iguanatweaks.events.IguanaTickHandler;
 import iguanaman.iguanatweaks.proxy.CommonProxy;
 import iguanaman.iguanatweaks.util.RecipeRemover;
 import iguanaman.iguanatweaks.util.StackSizeTweaks;
+import iguanaman.iguanatweaks.weight.WeightService;
 
 @Mod(modid = ModInfo.MODID, name = ModInfo.MOD_NAME, version = ModInfo.VERSION, dependencies = ModInfo.DEPENDENCIES, guiFactory = ModInfo.MOD_GUI_FACTORY)
 public class IguanaTweaks {
@@ -48,6 +49,7 @@ public class IguanaTweaks {
     public static CommonProxy proxy;
 
     public static Logger log;
+    private static File configFolder;
 
     public static Potion poisonNew;
     public static Potion slowdownNew;
@@ -58,7 +60,7 @@ public class IguanaTweaks {
     public void preInit(FMLPreInitializationEvent event) {
         log = event.getModLog();
 
-        File configFolder = new File(event.getModConfigurationDirectory().getAbsolutePath() + File.separator + ModInfo.MODID + File.separator);
+        configFolder = new File(event.getModConfigurationDirectory().getAbsolutePath() + File.separator + ModInfo.MODID + File.separator);
 
         new IguanaConfigHandler(configFolder);
 
@@ -97,6 +99,8 @@ public class IguanaTweaks {
 
     @EventHandler
     public void postInit(FMLPostInitializationEvent event) {
+
+        WeightService.initialize(configFolder);
 
         // STACK SIZE REDUCTION
         StackSizeTweaks.init();

@@ -11,6 +11,7 @@ import net.minecraftforge.common.config.Property;
 
 import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import iguanaman.iguanatweaks.weight.WeightService;
 
 public class IguanaConfig {
 
@@ -75,6 +76,8 @@ public class IguanaConfig {
     public static int terrainSlowdownInPlant;
     public static double rockWeight;
     public static double itemWeight;
+    public static double oreDictionaryBaseWeight;
+    public static double gt6KilogramsPerWeightUnit;
 
     // item entity lifespans
     public static int itemLifespan;
@@ -354,6 +357,16 @@ public class IguanaConfig {
         itemWeight = Math.max(itemWeightProperty.getDouble(0.015625D), 0);
         itemWeightProperty.set(itemWeight);
 
+        Property oreDictionaryBaseWeightProperty = config.get("movementrestriction", "oreDictionaryBaseWeight", 0.125D);
+        oreDictionaryBaseWeightProperty.comment = "Base weight of one full material unit (ingot, dust, gem) inferred from the Ore Dictionary";
+        oreDictionaryBaseWeight = Math.max(oreDictionaryBaseWeightProperty.getDouble(0.125D), 0D);
+        oreDictionaryBaseWeightProperty.set(oreDictionaryBaseWeight);
+
+        Property gt6KilogramsPerWeightUnitProperty = config.get("movementrestriction", "gt6KilogramsPerWeightUnit", 1000D);
+        gt6KilogramsPerWeightUnitProperty.comment = "GT6 physical kilograms represented by one encumbrance weight unit";
+        gt6KilogramsPerWeightUnit = Math.max(gt6KilogramsPerWeightUnitProperty.getDouble(1000D), 0.000001D);
+        gt6KilogramsPerWeightUnitProperty.set(gt6KilogramsPerWeightUnit);
+
         // item lifespans
         ConfigCategory itemlifespansCategory = config.getCategory("itemlifespans");
         itemlifespansCategory.setComment("Set lifespan of items spawned in various situations (20 ticks = 1 second)");
@@ -491,5 +504,6 @@ public class IguanaConfig {
 
         if(config.hasChanged())
             config.save();
+        WeightService.clearCaches();
     }
 }
