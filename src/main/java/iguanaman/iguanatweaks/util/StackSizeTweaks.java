@@ -20,7 +20,7 @@ public class StackSizeTweaks {
         boolean doItems = IguanaConfig.itemStackSizeDivider > 1;
         for(Object obj : Item.itemRegistry) {
             if(obj instanceof ItemBlock && doBlocks) {
-                Block block = ((ItemBlock)obj).blockInstance;
+                Block block = Block.getBlockFromItem((Item)obj);
                 ItemStack stack = new ItemStack(block);
                 float weight = (float)WeightService.getUnitWeight(stack, new WeightContext(CarryContext.INVENTORY));
                 int size = 0;

@@ -300,7 +300,7 @@ public class IguanaEventHook {
                     if(eitem != null && eitem.getEntityItem() != null) {
                         ItemStack item = eitem.getEntityItem();
 
-                        if(!isPlayer && (IguanaConfig.restrictedDrops.contains(Item.itemRegistry.getNameForObject(item)) || IguanaConfig.restrictedDrops.contains(Item.itemRegistry.getNameForObject(item) + ":" + Integer.toString(item.getMetadata())))) {
+                        if(!isPlayer && (IguanaConfig.restrictedDrops.contains(Item.itemRegistry.getNameForObject(item)) || IguanaConfig.restrictedDrops.contains(Item.itemRegistry.getNameForObject(item) + ":" + Integer.toString(item.getItemDamage())))) {
                             i.remove();
                         } else if(IguanaConfig.itemLifespanPlayerDeath != 6000 && isPlayer) {
                             eitem.lifespan = IguanaConfig.itemLifespanPlayerDeath;
