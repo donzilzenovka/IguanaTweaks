@@ -14,25 +14,23 @@ import iguanaman.iguanatweaks.config.IguanaConfig;
 
 /** Applies net recipe-input weight while a crafting result is being created. */
 public final class CraftingWeightConservation {
+    private static boolean installed;
+
     private CraftingWeightConservation() {}
 
     @SuppressWarnings("unchecked")
     public static void install() {
-        if(!IguanaConfig.conserveCraftingWeight) return;
+        if(installed || !IguanaConfig.conserveCraftingWeight) return;
         List<IRecipe> recipes = CraftingManager.getInstance().getRecipeList();
         int decorated = 0;
         for(int index = 0; index < recipes.size(); ++index) {
             IRecipe recipe = recipes.get(index);
-            if(recipe instanceof ConservingRecipe || !hasSafeOutput(recipe)) continue;
+            if(recipe == null || recipe instanceof ConservingRecipe) continue;
             recipes.set(index, new ConservingRecipe(recipe));
             ++decorated;
         }
-        IguanaTweaks.log.info("Crafting weight conservation enabled for " + decorated + " unstackable or NBT-bearing recipes");
-    }
-
-    private static boolean hasSafeOutput(IRecipe recipe) {
-        ItemStack output = recipe == null ? null : recipe.getRecipeOutput();
-        return output != null && (output.getMaxStackSize() <= 1 || output.hasTagCompound());
+        installed = true;
+        IguanaTweaks.log.info("Crafting weight conservation installed after mod loading for " + decorated + " recipes");
     }
 
     public static void apply(ItemStack output, IInventory craftMatrix) {
