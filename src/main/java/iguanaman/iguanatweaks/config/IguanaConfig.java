@@ -78,6 +78,7 @@ public class IguanaConfig {
     public static double itemWeight;
     public static double oreDictionaryBaseWeight;
     public static double gt6KilogramsPerWeightUnit;
+    public static boolean conserveCraftingWeight;
 
     // item entity lifespans
     public static int itemLifespan;
@@ -366,6 +367,10 @@ public class IguanaConfig {
         gt6KilogramsPerWeightUnitProperty.comment = "GT6 physical kilograms represented by one encumbrance weight unit";
         gt6KilogramsPerWeightUnit = Math.max(gt6KilogramsPerWeightUnitProperty.getDouble(1000D), 0.000001D);
         gt6KilogramsPerWeightUnitProperty.set(gt6KilogramsPerWeightUnit);
+
+        Property conserveCraftingWeightProperty = config.get("movementrestriction", "conserveCraftingWeight", true);
+        conserveCraftingWeightProperty.comment = "Store the net weight of consumed recipe inputs on safe NBT-bearing or unstackable crafted outputs";
+        conserveCraftingWeight = conserveCraftingWeightProperty.getBoolean(true);
 
         // item lifespans
         ConfigCategory itemlifespansCategory = config.getCategory("itemlifespans");

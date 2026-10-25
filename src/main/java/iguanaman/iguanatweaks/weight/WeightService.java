@@ -25,6 +25,7 @@ public final class WeightService {
         WeightOverrides overrides = WeightOverrides.load(new File(configFolder, "weights"));
         RESOLVERS.add(new LegacyJsonWeightResolver());
         RESOLVERS.add(new OverrideWeightResolver(overrides, OverrideWeightResolver.Mode.ITEM));
+        RESOLVERS.add(new CraftedWeightResolver());
         RESOLVERS.add(new OverrideWeightResolver(overrides, OverrideWeightResolver.Mode.ORE_DICTIONARY));
         RESOLVERS.add(new OverrideWeightResolver(overrides, OverrideWeightResolver.Mode.MOD_DEFAULT));
         IWeightResolver gregTech = GregTech6WeightResolver.createIfAvailable();
@@ -58,6 +59,10 @@ public final class WeightService {
     public static double getUnitWeight(ItemStack stack, WeightContext context) {
         WeightResult result = resolve(stack, context);
         return result.isResolved() ? result.getUnitWeight() : 0d;
+    }
+
+    public static void recordCraftedWeight(ItemStack output, double unitWeight) {
+        CraftedWeightResolver.write(output, unitWeight);
     }
 
     public static void clearCaches() {

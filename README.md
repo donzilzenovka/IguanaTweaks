@@ -40,3 +40,10 @@ Per-mod files live in `config/IguanaTweaks/weights/<modid>.json`:
 All members are optional. Exact metadata items override exact items, followed by Ore
 Dictionary overrides and the per-mod default. Existing `weights.json` entries retain
 highest priority for compatibility.
+
+Prototype 4 makes crafted, unstackable or already-NBT-bearing outputs conserve the net weight of the
+actual recipe inputs. One item from each occupied crafting slot is counted, returned
+container items are subtracted, and the result is divided by the recipe output count.
+The recipe-derived value is stored in the output NBT, allowing otherwise identical GT6
+tools made from different materials to retain different weights. Exact item overrides
+still take priority. This behavior can be disabled with `conserveCraftingWeight=false`.

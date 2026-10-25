@@ -3,6 +3,8 @@ package iguanaman.iguanatweaks.events;
 import net.minecraft.block.BlockBed;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.ChunkCoordinates;
@@ -15,10 +17,42 @@ import net.minecraftforge.common.BiomeDictionary.Type;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent.ItemCraftedEvent;
 import iguanaman.iguanatweaks.IguanaTweaks;
 import iguanaman.iguanatweaks.config.IguanaConfig;
+import iguanaman.iguanatweaks.weight.CarryContext;
+import iguanaman.iguanatweaks.weight.WeightContext;
+import iguanaman.iguanatweaks.weight.WeightService;
 
 public class IguanaPlayerHandler {
+
+    @SubscribeEvent
+    public void onItemCrafted(ItemCraftedEvent event) {
+        ItemStack output = event.crafting;
+        if(!IguanaConfig.conserveCraftingWeight || output == null || output.getItem() == null) return;
+        if(output.getMaxStackSize() > 1 && !output.hasTagCompound()) return;
+
+        double inputWeight = getConsumedInputWeight(event.craftMatrix);
+        if(inputWeight <= 0D) return;
+        WeightService.recordCraftedWeight(output, inputWeight / Math.max(1, output.stackSize));
+    }
+
+    private static double getConsumedInputWeight(IInventory craftMatrix) {
+        double total = 0D;
+        WeightContext context = new WeightContext(CarryContext.INVENTORY);
+        for(int slot = 0; slot < craftMatrix.getSizeInventory(); ++slot) {
+            ItemStack ingredient = craftMatrix.getStackInSlot(slot);
+            if(ingredient == null || ingredient.getItem() == null) continue;
+            ItemStack single = ingredient.copy();
+            single.stackSize = 1;
+            total += WeightService.getUnitWeight(single, context);
+            if(single.getItem().hasContainerItem(single)) {
+                ItemStack returned = single.getItem().getContainerItem(single);
+                if(returned != null) total -= WeightService.getUnitWeight(returned, context);
+            }
+        }
+        return Math.max(0D, total);
+    }
 
     @SubscribeEvent
     public void onPlayerLogin(PlayerLoggedInEvent event) {
