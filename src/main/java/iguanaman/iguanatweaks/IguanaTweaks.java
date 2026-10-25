@@ -36,6 +36,7 @@ import iguanaman.iguanatweaks.proxy.CommonProxy;
 import iguanaman.iguanatweaks.util.RecipeRemover;
 import iguanaman.iguanatweaks.util.StackSizeTweaks;
 import iguanaman.iguanatweaks.weight.WeightService;
+import iguanaman.iguanatweaks.weight.CraftingWeightConservation;
 
 @Mod(modid = ModInfo.MODID, name = ModInfo.MOD_NAME, version = ModInfo.VERSION, dependencies = ModInfo.DEPENDENCIES, guiFactory = ModInfo.MOD_GUI_FACTORY)
 public class IguanaTweaks {
@@ -101,6 +102,7 @@ public class IguanaTweaks {
     public void postInit(FMLPostInitializationEvent event) {
 
         WeightService.initialize(configFolder);
+        CraftingWeightConservation.install();
 
         // STACK SIZE REDUCTION
         StackSizeTweaks.init();
