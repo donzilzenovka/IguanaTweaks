@@ -46,6 +46,16 @@ public final class WeightService {
             WeightResult cached = STATIC_WEIGHTS.get(key);
             if(cached != null) return cached;
         }
+        // GT6MaterialExpansion stores durability-adjusted material composition on the
+        // stack. Prefer GT6's live weight over a fixed crafting-time NBT snapshot.
+        // If GT6 cannot resolve it, retain the normal resolver fallback order.
+        if(stack.hasTagCompound() && stack.getTagCompound().hasKey("gt.recycling.mats")) {
+            for(IWeightResolver resolver : RESOLVERS) {
+                if(!(resolver instanceof GregTech6WeightResolver)) continue;
+                WeightResult live = resolver.resolve(stack, context);
+                if(live != null && live.isResolved()) return live;
+            }
+        }
         for(IWeightResolver resolver : RESOLVERS) {
             WeightResult result = resolver.resolve(stack, context);
             if(result != null && result.isResolved()) {
