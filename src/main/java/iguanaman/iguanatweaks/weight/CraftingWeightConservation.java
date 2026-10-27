@@ -11,7 +11,9 @@ public final class CraftingWeightConservation {
 
     public static void apply(ItemStack output, IInventory craftMatrix) {
         if(!IguanaConfig.conserveCraftingWeight || output == null || output.getItem() == null || craftMatrix == null) return;
-        if(output.getMaxStackSize() > 1 && !output.hasTagCompound()) return;
+        // Stackable outputs must not receive per-craft weight NBT: it prevents normal merges.
+        // Existing material/provenance NBT does not change this rule.
+        if(output.getMaxStackSize() > 1) return;
         double inputWeight = getConsumedInputWeight(craftMatrix);
         if(inputWeight <= 0D) return;
         WeightService.recordCraftedWeight(output, inputWeight / Math.max(1, output.stackSize));
