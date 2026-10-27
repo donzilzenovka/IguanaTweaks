@@ -1,37 +1,13 @@
 package iguanaman.iguanatweaks.weight;
 
-import java.util.List;
-
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.CraftingManager;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.world.World;
 
-import iguanaman.iguanatweaks.IguanaTweaks;
 import iguanaman.iguanatweaks.config.IguanaConfig;
 
-/** Applies net recipe-input weight while a crafting result is being created. */
+/** Applies net ingredient weight to crafted items via ItemCraftedEvent without changing recipes. */
 public final class CraftingWeightConservation {
-    private static boolean installed;
-
     private CraftingWeightConservation() {}
-
-    @SuppressWarnings("unchecked")
-    public static void install() {
-        if(installed || !IguanaConfig.conserveCraftingWeight) return;
-        List<IRecipe> recipes = CraftingManager.getInstance().getRecipeList();
-        int decorated = 0;
-        for(int index = 0; index < recipes.size(); ++index) {
-            IRecipe recipe = recipes.get(index);
-            if(recipe == null || recipe instanceof ConservingRecipe) continue;
-            recipes.set(index, new ConservingRecipe(recipe));
-            ++decorated;
-        }
-        installed = true;
-        IguanaTweaks.log.info("Crafting weight conservation installed after mod loading for " + decorated + " recipes");
-    }
 
     public static void apply(ItemStack output, IInventory craftMatrix) {
         if(!IguanaConfig.conserveCraftingWeight || output == null || output.getItem() == null || craftMatrix == null) return;
@@ -58,33 +34,4 @@ public final class CraftingWeightConservation {
         return Math.max(0D, total);
     }
 
-    private static final class ConservingRecipe implements IRecipe {
-        private final IRecipe delegate;
-
-        private ConservingRecipe(IRecipe delegate) {
-            this.delegate = delegate;
-        }
-
-        @Override
-        public boolean matches(InventoryCrafting inventory, World world) {
-            return delegate.matches(inventory, world);
-        }
-
-        @Override
-        public ItemStack getCraftingResult(InventoryCrafting inventory) {
-            ItemStack result = delegate.getCraftingResult(inventory);
-            apply(result, inventory);
-            return result;
-        }
-
-        @Override
-        public int getRecipeSize() {
-            return delegate.getRecipeSize();
-        }
-
-        @Override
-        public ItemStack getRecipeOutput() {
-            return delegate.getRecipeOutput();
-        }
-    }
 }

@@ -20,7 +20,6 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLLoadCompleteEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -37,7 +36,6 @@ import iguanaman.iguanatweaks.proxy.CommonProxy;
 import iguanaman.iguanatweaks.util.RecipeRemover;
 import iguanaman.iguanatweaks.util.StackSizeTweaks;
 import iguanaman.iguanatweaks.weight.WeightService;
-import iguanaman.iguanatweaks.weight.CraftingWeightConservation;
 
 @Mod(modid = ModInfo.MODID, name = ModInfo.MOD_NAME, version = ModInfo.VERSION, dependencies = ModInfo.DEPENDENCIES, guiFactory = ModInfo.MOD_GUI_FACTORY)
 public class IguanaTweaks {
@@ -119,8 +117,4 @@ public class IguanaTweaks {
         //FMLCommonHandler.instance().bus().register(UpdateChecker.instance.new UpdaterEventHook());
     }
 
-    @EventHandler
-    public void loadComplete(FMLLoadCompleteEvent event) {
-        CraftingWeightConservation.install();
-    }
 }
