@@ -39,7 +39,7 @@ final class GregTech6WeightResolver implements IWeightResolver {
             single.stackSize = 1;
             double kilograms = ((Number)weightMethod.invoke(null, single)).doubleValue();
             if(kilograms <= 0d || Double.isNaN(kilograms) || Double.isInfinite(kilograms)) return WeightResult.unresolved();
-            return WeightResult.resolved(kilograms / IguanaConfig.gt6KilogramsPerWeightUnit, "gregtech6-material", CachePolicy.STATIC_ITEM_META);
+            return WeightResult.resolved(kilograms / IguanaConfig.gt6KilogramsPerWeightUnit, "gregtech6-material", CachePolicy.UNCACHEABLE);
         } catch(Exception error) {
             failed = true;
             IguanaTweaks.log.warn("GregTech weight integration failed and has been disabled for this session", error);
